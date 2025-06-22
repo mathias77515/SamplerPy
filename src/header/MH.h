@@ -26,7 +26,7 @@ public:
     MetropolisHastings(std::function<double(std::vector<double>)> func);
 
     // Runs the sampler for nsteps starting from x0 with proposal std deviations
-    std::vector<std::vector<double>> samples(int nsteps, std::vector<double> x0, std::vector<double> proposal_std);
+    std::vector<std::vector<double>> samples(int nsteps, std::vector<double> x0, std::vector<double> proposal_std, const int percent_step, bool progressbar);
 
     // Performs a single Metropolis-Hastings step from current point
     std::vector<double> iteration(std::vector<double> point, std::vector<double>& sigma, int steps);
@@ -38,6 +38,8 @@ public:
     // Get history of stats at each step
     std::vector<MHStats> get_stats_history() const;
     py::dict get_stats_history_dict() const;
+
+    
 
 private:
 
@@ -56,6 +58,9 @@ private:
 
     std::vector<double> accepted_per_dim;
     std::vector<double> total_per_dim;
+
+    //void printProgressBar(int current, int total, int barLength = 100);
+
 };
 
 #endif // MH_H
