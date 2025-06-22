@@ -12,7 +12,7 @@ class get_pybind_include(object):
 ext_modules = [
     Extension(
         'SamplerPy',                              # name of the module
-        ['src/MH.cpp'],  # your source files
+        ['src/MH.cpp', 'src/utils.cpp'],  # your source files
         include_dirs=[
             get_pybind_include(),
             # add other include dirs, e.g. current directory, or where UF23Field.h lives
