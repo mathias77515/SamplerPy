@@ -11,7 +11,7 @@ class get_pybind_include(object):
 
 ext_modules = [
     Extension(
-        'Samplerpy',                              # name of the module
+        'SamplerPy',                              # name of the module
         ['src/MH.cpp'],  # your source files
         include_dirs=[
             get_pybind_include(),
@@ -25,7 +25,7 @@ ext_modules = [
 
 
 setup(
-    name='Samplerpy',
+    name='SamplerPy',
     version='1.0.0',
     author='Regnier Mathias',
     description='',
