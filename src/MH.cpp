@@ -124,7 +124,7 @@ std::vector<std::vector<double>> MetropolisHastings::samples(int nsteps, std::ve
     return chain;
 }
 
-PYBIND11_MODULE(Samplerpy, m) {
+PYBIND11_MODULE(SamplerPy, m) {
     py::class_<MHStats>(m, "MHStats")
         .def_readonly("accepted", &MHStats::accepted)
         .def_readonly("total", &MHStats::total)
