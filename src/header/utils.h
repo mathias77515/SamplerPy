@@ -4,6 +4,6 @@
 #include <iostream>
 #include <chrono>
 
-void printProgressBar(int current, int total);
+void printProgressBar(int current, int total, int barLength = 50);
 
 #endif

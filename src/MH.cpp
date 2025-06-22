@@ -1,4 +1,6 @@
-#include "MH.h"
+#include "header/MH.h"
+//#include "header/utils.h"
+
 #include <iostream>
 #include <random>
 #include <pybind11/pybind11.h>
@@ -7,6 +9,24 @@
 #include <omp.h>
 
 namespace py = pybind11;
+
+void printProgressBar(int current, int total, int barLength = 100) {
+    if (current == 0 || total == 0) return;
+
+    double percentage = (static_cast<double>(current) / total) * 100;
+    int filledLength = static_cast<int>((percentage / 100) * barLength);
+
+    std::cout << "\rProgress: [";
+    for (int i = 0; i < barLength; ++i) {
+        if (i < filledLength) {
+            std::cout << "#";
+        } else {
+            std::cout << " ";
+        }
+    }
+    std::cout << "] " << static_cast<int>(percentage) << "%";
+    std::cout.flush();
+}
 
 MetropolisHastings::MetropolisHastings(std::function<double(std::vector<double>)> func)
     : func(func), engine(std::random_device{}()), normal(0.0, 1.0), uniform(0.0, 1.0) 
@@ -93,7 +113,7 @@ std::vector<double> MetropolisHastings::iteration(std::vector<double> point, std
     }
 }
 
-std::vector<std::vector<double>> MetropolisHastings::samples(int nsteps, std::vector<double> x0, std::vector<double> proposal_std) {
+std::vector<std::vector<double>> MetropolisHastings::samples(int nsteps, std::vector<double> x0, std::vector<double> proposal_std, const int percent_step=1, bool progressbar=true) {
 
     // Number of dimensions
     int dim = x0.size();
@@ -104,9 +124,18 @@ std::vector<std::vector<double>> MetropolisHastings::samples(int nsteps, std::ve
     stats_history.clear();
 
     //double alpha = 1.0; // initial learning rate
-
+    int next_percent = 0;
     // Loop over iterations
     for (int steps = 0; steps < nsteps; steps++) {
+        
+        int current_percent = (steps * 100) / nsteps;
+
+        if (current_percent >= next_percent && progressbar == true) {
+            printProgressBar(steps, nsteps);
+            next_percent += percent_step;
+        }
+        
+
         x = iteration(x, proposal_std, steps);
 
         // Adapt proposal standard deviations based on acceptance rate
@@ -132,7 +161,7 @@ PYBIND11_MODULE(SamplerPy, m) {
 
     py::class_<MetropolisHastings>(m, "MetropolisHastings")
         .def(py::init<std::function<double(std::vector<double>)>>(), py::arg("func"))
-        .def("samples", &MetropolisHastings::samples, py::arg("nsteps"), py::arg("x0"), py::arg("proposal_std"))
+        .def("samples", &MetropolisHastings::samples, py::arg("nsteps"), py::arg("x0"), py::arg("proposal_std"), py::arg("percent_step"), py::arg("progressbar"))
         .def("iteration", &MetropolisHastings::iteration, py::arg("point"), py::arg("sigma"), py::arg("steps"))
         .def("adaptProposal", &MetropolisHastings::adaptProposal)
         .def("get_stats", &MetropolisHastings::get_stats)
