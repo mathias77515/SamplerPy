@@ -113,7 +113,7 @@ std::vector<double> MetropolisHastings::iteration(std::vector<double> point, std
     }
 }
 
-std::vector<std::vector<double>> MetropolisHastings::samples(int nsteps, std::vector<double> x0, std::vector<double> proposal_std, const int percent_step=1, bool progressbar=true) {
+std::vector<std::vector<double>> MetropolisHastings::samples(int nsteps, std::vector<double> x0, std::vector<double> proposal_std, const int percent_step=1, bool adaptative=true, bool progressbar=true) {
 
     // Number of dimensions
     int dim = x0.size();
@@ -123,8 +123,8 @@ std::vector<std::vector<double>> MetropolisHastings::samples(int nsteps, std::ve
     // Reset history at the start
     stats_history.clear();
 
-    //double alpha = 1.0; // initial learning rate
     int next_percent = 0;
+
     // Loop over iterations
     for (int steps = 0; steps < nsteps; steps++) {
         
@@ -135,13 +135,13 @@ std::vector<std::vector<double>> MetropolisHastings::samples(int nsteps, std::ve
             next_percent += percent_step;
         }
         
-
         x = iteration(x, proposal_std, steps);
 
-        // Adapt proposal standard deviations based on acceptance rate
-        //std::vector<double> std_devs(proposal_std.size(), 1.0);
-        proposal_std = adaptProposal(proposal_std);
-        //std::cout << proposal_std[0] << " accepted : " << stats.accepted << " total : " << stats.total << " ratio : " << stats.ratio << std::endl;
+        if (adaptative == true) {
+            // Adapt proposal standard deviations based on acceptance rate
+            proposal_std = adaptProposal(proposal_std);
+        }
+        
         // Store a copy of the current stats
         stats_history.push_back(stats);
 
@@ -161,7 +161,7 @@ PYBIND11_MODULE(SamplerPy, m) {
 
     py::class_<MetropolisHastings>(m, "MetropolisHastings")
         .def(py::init<std::function<double(std::vector<double>)>>(), py::arg("func"))
-        .def("samples", &MetropolisHastings::samples, py::arg("nsteps"), py::arg("x0"), py::arg("proposal_std"), py::arg("percent_step"), py::arg("progressbar"))
+        .def("samples", &MetropolisHastings::samples, py::arg("nsteps"), py::arg("x0"), py::arg("proposal_std"), py::arg("percent_step"), py::arg("progressbar"), py::arg("adaptative"))
         .def("iteration", &MetropolisHastings::iteration, py::arg("point"), py::arg("sigma"), py::arg("steps"))
         .def("adaptProposal", &MetropolisHastings::adaptProposal)
         .def("get_stats", &MetropolisHastings::get_stats)

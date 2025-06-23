@@ -26,7 +26,7 @@ public:
     MetropolisHastings(std::function<double(std::vector<double>)> func);
 
     // Runs the sampler for nsteps starting from x0 with proposal std deviations
-    std::vector<std::vector<double>> samples(int nsteps, std::vector<double> x0, std::vector<double> proposal_std, const int percent_step, bool progressbar);
+    std::vector<std::vector<double>> samples(int nsteps, std::vector<double> x0, std::vector<double> proposal_std, const int percent_step, bool progressbar, bool adaptative);
 
     // Performs a single Metropolis-Hastings step from current point
     std::vector<double> iteration(std::vector<double> point, std::vector<double>& sigma, int steps);
