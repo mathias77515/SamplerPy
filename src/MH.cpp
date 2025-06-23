@@ -161,7 +161,7 @@ PYBIND11_MODULE(SamplerPy, m) {
 
     py::class_<MetropolisHastings>(m, "MetropolisHastings")
         .def(py::init<std::function<double(std::vector<double>)>>(), py::arg("func"))
-        .def("samples", &MetropolisHastings::samples, py::arg("nsteps"), py::arg("x0"), py::arg("proposal_std"), py::arg("percent_step"), py::arg("progressbar"), py::arg("adaptative"))
+        .def("samples", &MetropolisHastings::samples, py::arg("nsteps"), py::arg("x0"), py::arg("proposal_std"), py::arg("percent_step"), py::arg("adaptative"), py::arg("progressbar"))
         .def("iteration", &MetropolisHastings::iteration, py::arg("point"), py::arg("sigma"), py::arg("steps"))
         .def("adaptProposal", &MetropolisHastings::adaptProposal)
         .def("get_stats", &MetropolisHastings::get_stats)
