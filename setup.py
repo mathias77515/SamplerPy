@@ -16,16 +16,15 @@ def brew_prefix(package_name):
     except subprocess.CalledProcessError:
         return None
 
-libomp_prefix = brew_prefix("libomp")
-python_include = sysconfig.get_paths()["include"]
+#libomp_prefix = brew_prefix("libomp")
+#python_include = sysconfig.get_paths()["include"]
 
 ext_modules = [
     Extension(
         'SamplerPy',                              # name of the module
         ['src/MH.cpp', 'src/utils.cpp'],  # your source files
         include_dirs=[
-            libomp_prefix + '/include',
-            python_include,
+            #python_include,
             # add other include dirs, e.g. current directory, or where UF23Field.h lives
             '.',
         ],
