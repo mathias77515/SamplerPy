@@ -113,6 +113,57 @@ std::vector<double> MetropolisHastings::iteration(std::vector<double> point, std
     }
 }
 
+std::vector<std::vector<std::vector<double>>> MetropolisHastings::samples(int nsteps, std::vector<std::vector<double>> x0, std::vector<std::vector<double>> proposal_std, int nchain, const int percent_step=1, bool adaptative=true, bool progressbar=true) {
+
+    // Number of dimensions
+    int dim = x0.size();
+    std::vector<std::vector<double>> x = x0;
+    std::vector<std::vector<std::vector<double>>> chain(
+    nchain,
+    std::vector<std::vector<double>>(
+        nsteps,
+        std::vector<double>(dim, 0.0)
+    )
+);
+
+    //std::vector<std::vector<std::vector<double>>> chain(nchain, nsteps, std::vector<double>(dim, 0.0));
+
+    // Reset history at the start
+    stats_history.clear();
+
+    int next_percent = 0;
+
+    // Loop over iterations
+    for (int steps = 0; steps < nsteps; steps++) {
+        
+        int current_percent = (steps * 100) / nsteps;
+
+        if (current_percent >= next_percent && progressbar == true) {
+            printProgressBar(steps, nsteps);
+            next_percent += percent_step;
+        }
+        
+        for (int c = 0; c < nchain; c++) {
+            x[c] = iteration(x[c], proposal_std[c], steps);
+
+            if (adaptative == true) {
+                // Adapt proposal standard deviations based on acceptance rate
+                proposal_std[c] = adaptProposal(proposal_std[c]);
+            }
+            
+            // Store a copy of the current stats
+            stats_history.push_back(stats);
+
+            for (int d = 0; d < dim; d++) {
+                chain[c][steps][d] = x[c][d];
+            }   
+        }
+    }
+
+    return chain;
+}
+
+/*
 std::vector<std::vector<double>> MetropolisHastings::samples(int nsteps, std::vector<double> x0, std::vector<double> proposal_std, const int percent_step=1, bool adaptative=true, bool progressbar=true) {
 
     // Number of dimensions
@@ -152,6 +203,7 @@ std::vector<std::vector<double>> MetropolisHastings::samples(int nsteps, std::ve
 
     return chain;
 }
+*/
 
 PYBIND11_MODULE(SamplerPy, m) {
     py::class_<MHStats>(m, "MHStats")
@@ -161,7 +213,7 @@ PYBIND11_MODULE(SamplerPy, m) {
 
     py::class_<MetropolisHastings>(m, "MetropolisHastings")
         .def(py::init<std::function<double(std::vector<double>)>>(), py::arg("func"))
-        .def("samples", &MetropolisHastings::samples, py::arg("nsteps"), py::arg("x0"), py::arg("proposal_std"), py::arg("percent_step"), py::arg("adaptative"), py::arg("progressbar"))
+        .def("samples", &MetropolisHastings::samples, py::arg("nsteps"), py::arg("x0"), py::arg("proposal_std"), py::arg("nchain") = 1, py::arg("percent_step") = 1 , py::arg("adaptative"), py::arg("progressbar"))
         .def("iteration", &MetropolisHastings::iteration, py::arg("point"), py::arg("sigma"), py::arg("steps"))
         .def("adaptProposal", &MetropolisHastings::adaptProposal)
         .def("get_stats", &MetropolisHastings::get_stats)
