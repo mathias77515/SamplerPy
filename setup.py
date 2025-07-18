@@ -19,23 +19,24 @@ def brew_prefix(package_name):
 
 #libomp_prefix = brew_prefix("libomp")
 #python_include = sysconfig.get_paths()["include"]
-sdk_path = os.popen('xcrun --show-sdk-path').read().strip()
 
 llvm_path = '/opt/homebrew/opt/llvm'
+sdk_path = os.popen('xcrun --show-sdk-path').read().strip()
 
 extra_compile_args = [
-    '-fopenmp',
     '-O2',
+    '-Xpreprocessor', '-fopenmp',
     f'-I{llvm_path}/include',
     '-arch', 'arm64',
-    f'-isysroot', os.popen('xcrun --show-sdk-path').read().strip(),
+    '-isysroot', sdk_path,
 ]
 
 extra_link_args = [
-    '-fopenmp',
     f'-L{llvm_path}/lib',
+    '-lomp',
     '-arch', 'arm64',
-    f'-isysroot', os.popen('xcrun --show-sdk-path').read().strip(),
+    '-isysroot', sdk_path,
+    f'-Wl,-rpath,{llvm_path}/lib',
 ]
 
 ext_modules = [
