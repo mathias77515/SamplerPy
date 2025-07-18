@@ -29,8 +29,7 @@ ext_modules = [
             '.',
         ],
         language='c++',
-        extra_compile_args=['-std=c++17', '-fopenmp'],  # match your C++ standard
-        extra_link_args=['-fopenmp'],
+        extra_compile_args=['-std=c++17'],  # match your C++ standard,
     ),
 ]
 

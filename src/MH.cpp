@@ -31,9 +31,9 @@ void printProgressBar(int current, int total, int barLength = 100) {
 MetropolisHastings::MetropolisHastings(std::function<double(std::vector<double>)> func)
     : func(func), engine(std::random_device{}()), normal(0.0, 1.0), uniform(0.0, 1.0) 
     {   
-        //int numThreads = omp_get_max_threads();
-        //omp_set_num_threads(numThreads);
-        //std::cout << "Number of available CPU cores: " << numThreads << std::endl;
+        int numThreads = 1;//omp_get_max_threads();
+        omp_set_num_threads(numThreads);
+        std::cout << "\nNumber of available CPU cores: " << numThreads << "\n"<< std::endl;
         stats.accepted = 0.0;
         stats.total = 0.0;
         stats.ratio = 0.0;
