@@ -28,15 +28,34 @@ void printProgressBar(int current, int total, int barLength = 100) {
     std::cout.flush();
 }
 
+int get_num_threads() {
+    const char* env_omp = std::getenv("OMP_NUM_THREADS");
+    if (env_omp != nullptr) {
+        try {
+            int n = std::stoi(env_omp);
+            if (n > 0) {
+                return n;
+            }
+        } catch (...) {
+            // ignore conversion errors
+        }
+    }
+    // Fallback: max available threads
+    return omp_get_max_threads();
+}
+
 MetropolisHastings::MetropolisHastings(std::function<double(std::vector<double>)> func)
     : func(func), engine(std::random_device{}()), normal(0.0, 1.0), uniform(0.0, 1.0) 
     {   
+
+        int numThreads = get_num_threads();
 
         omp_set_dynamic(0);     // Explicitly disable dynamic teams
         omp_set_num_threads(omp_get_max_threads()); // Use 4 threads for all consecutive parallel regions
 
         int max_threads = omp_get_max_threads();
         int num_procs = omp_get_num_procs();
+        std::cout << "Using " << numThreads << " threads for OpenMP." << std::endl;
         std::cout << "OMP_NUM_THREADS (max threads OpenMP will use): " << max_threads << std::endl;
         std::cout << "Available processors: " << num_procs << std::endl;
 
