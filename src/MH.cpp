@@ -161,14 +161,6 @@ std::vector<std::vector<std::vector<double>>> MetropolisHastings::samples(int ns
 
     int next_percent = 0;
 
-    #pragma omp parallel
-    {
-        #pragma omp critical
-        {
-            std::cout << "Thread " << omp_get_thread_num() << "/" << omp_get_num_threads() << std::endl;
-        }
-    }
-
     // Loop over iterations
     for (int steps = 0; steps < nsteps; steps++) {
 
