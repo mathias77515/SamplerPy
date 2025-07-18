@@ -24,8 +24,7 @@ llvm_path = '/opt/homebrew/opt/llvm'
 sdk_path = os.popen('xcrun --show-sdk-path').read().strip()
 
 extra_compile_args = [
-    '-O2',
-    '-Xpreprocessor', '-fopenmp',
+    '-fopenmp',
     f'-I{llvm_path}/include',
     '-arch', 'arm64',
     '-isysroot', sdk_path,
