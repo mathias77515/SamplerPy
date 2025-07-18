@@ -51,7 +51,7 @@ MetropolisHastings::MetropolisHastings(std::function<double(std::vector<double>)
         int numThreads = get_num_threads();
 
         omp_set_dynamic(0);     // Explicitly disable dynamic teams
-        omp_set_num_threads(omp_get_max_threads()); // Use 4 threads for all consecutive parallel regions
+        omp_set_num_threads(numThreads); // Use 4 threads for all consecutive parallel regions
 
         int max_threads = omp_get_max_threads();
         int num_procs = omp_get_num_procs();
