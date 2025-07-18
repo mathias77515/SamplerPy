@@ -31,9 +31,11 @@ void printProgressBar(int current, int total, int barLength = 100) {
 MetropolisHastings::MetropolisHastings(std::function<double(std::vector<double>)> func)
     : func(func), engine(std::random_device{}()), normal(0.0, 1.0), uniform(0.0, 1.0) 
     {   
-        int numThreads = omp_get_num_threads();
-        //omp_set_num_threads(numThreads);
-        std::cout << "\nNumber of available CPU cores: " << numThreads << "\n"<< std::endl;
+        int max_threads = omp_get_max_threads();
+        int num_procs = omp_get_num_procs();
+        std::cout << "OMP_NUM_THREADS (max threads OpenMP will use): " << max_threads << std::endl;
+        std::cout << "Available processors: " << num_procs << std::endl;
+
         stats.accepted = 0.0;
         stats.total = 0.0;
         stats.ratio = 0.0;
