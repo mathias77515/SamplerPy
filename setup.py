@@ -18,6 +18,7 @@ def brew_prefix(package_name):
 
 #libomp_prefix = brew_prefix("libomp")
 #python_include = sysconfig.get_paths()["include"]
+clang_path = "/opt/homebrew/opt/llvm/bin/clang++"
 
 ext_modules = [
     Extension(
@@ -29,14 +30,8 @@ ext_modules = [
             '.',
         ],
         language='c++',
-        extra_compile_args=[
-            "-Xpreprocessor", "-fopenmp",
-            "-I/opt/homebrew/include"  # or /usr/local/include
-        ],
-        extra_link_args=[
-            "-lomp",
-            "-L/opt/homebrew/lib"  # or /usr/local/lib
-        ],
+        extra_compile_args=['-std=c++17', "-fopenmp"],  # match your C++ standard,
+        extra_link_args=["-fopenmp"]
     ),
 ]
 
