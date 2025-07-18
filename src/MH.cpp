@@ -32,7 +32,7 @@ MetropolisHastings::MetropolisHastings(std::function<double(std::vector<double>)
     : func(func), engine(std::random_device{}()), normal(0.0, 1.0), uniform(0.0, 1.0) 
     {   
         const char* env_omp = std::getenv("OMP_NUM_THREADS");
-        int val = std::stoi(std::string(env_p));
+        int val = std::stoi(std::string(env_omp));
         std::cout << val << std::endl;
 
         omp_set_dynamic(0);     // Explicitly disable dynamic teams
