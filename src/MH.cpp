@@ -181,7 +181,11 @@ std::vector<std::vector<std::vector<double>>> MetropolisHastings::samples(int ns
         #pragma omp parallel for
         for (int chain_i = 0; chain_i < nchain; chain_i++) {
 
-            
+            #pragma omp critical
+            {
+                std::cout << "Running chain " << chain_i
+                        << " on thread " << omp_get_thread_num() << std::endl;
+            }
 
             x[chain_i] = iteration(x[chain_i], proposal_std_all[chain_i], steps);
 
