@@ -157,7 +157,7 @@ std::vector<std::vector<std::vector<double>>> MetropolisHastings::samples(int ns
 
 
     // Reset history at the start
-    stats_history.clear();
+    //stats_history.clear();
 
     int next_percent = 0;
 
@@ -193,7 +193,7 @@ std::vector<std::vector<std::vector<double>>> MetropolisHastings::samples(int ns
             //std::cout << proposal_std_all[0][0] << std::endl;
 
             // Store a copy of the current stats
-            stats_history.push_back(stats);
+            //stats_history.push_back(stats);
 
             for (int d = 0; d < dim; d++) {
                 chain[chain_i][steps][d] = x[chain_i][d];
