@@ -179,9 +179,7 @@ std::vector<std::vector<std::vector<double>>> MetropolisHastings::samples(int ns
                 next_percent += percent_step;
             }
 
-        #pragma omp parallel
-        {
-        #pragma omp for schedule(static)
+        #pragma omp parallel for
         for (int chain_i = 0; chain_i < nchain; chain_i++) {
 
             #pragma omp critical
@@ -205,7 +203,7 @@ std::vector<std::vector<std::vector<double>>> MetropolisHastings::samples(int ns
             for (int d = 0; d < dim; d++) {
                 chain[chain_i][steps][d] = x[chain_i][d];
             } 
-        }} 
+        }  
     }
 
     return chain;
