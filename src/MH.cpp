@@ -31,6 +31,12 @@ void printProgressBar(int current, int total, int barLength = 100) {
 MetropolisHastings::MetropolisHastings(std::function<double(std::vector<double>)> func)
     : func(func), engine(std::random_device{}()), normal(0.0, 1.0), uniform(0.0, 1.0) 
     {   
+        const char* env_omp = std::getenv("OMP_NUM_THREADS");
+        if (env_omp) {
+            std::cout << "OMP_NUM_THREADS environment variable: " << env_omp << "\n";
+        } else {
+            std::cout << "OMP_NUM_THREADS is not set (OpenMP will use default max threads)\n";
+        }
         int max_threads = omp_get_max_threads();
         int num_procs = omp_get_num_procs();
         std::cout << "OMP_NUM_THREADS (max threads OpenMP will use): " << max_threads << std::endl;
