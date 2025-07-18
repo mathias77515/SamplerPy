@@ -43,8 +43,8 @@ ext_modules = [
         'SamplerPy',
         sources=['src/MH.cpp', 'src/utils.cpp'],
         include_dirs=[sysconfig.get_paths()['include'], f'{llvm_path}/include'],
-        #extra_compile_args=extra_compile_args,
-        #extra_link_args=extra_link_args,
+        extra_compile_args=extra_compile_args,
+        extra_link_args=extra_link_args,
         language='c++',
     ),
 ]
