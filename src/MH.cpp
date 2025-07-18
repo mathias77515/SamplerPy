@@ -56,7 +56,6 @@ MetropolisHastings::MetropolisHastings(std::function<double(std::vector<double>)
         int max_threads = omp_get_max_threads();
         int num_procs = omp_get_num_procs();
         std::cout << "Using " << numThreads << " threads for OpenMP." << std::endl;
-        std::cout << "OMP_NUM_THREADS (max threads OpenMP will use): " << max_threads << std::endl;
         std::cout << "Available processors: " << num_procs << std::endl;
 
         stats.accepted = 0.0;
@@ -161,6 +160,14 @@ std::vector<std::vector<std::vector<double>>> MetropolisHastings::samples(int ns
     stats_history.clear();
 
     int next_percent = 0;
+
+    #pragma omp parallel
+    {
+        #pragma omp critical
+        {
+            std::cout << "Thread " << omp_get_thread_num() << "/" << omp_get_num_threads() << std::endl;
+        }
+    }
 
     // Loop over iterations
     for (int steps = 0; steps < nsteps; steps++) {
