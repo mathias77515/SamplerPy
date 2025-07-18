@@ -3,6 +3,7 @@ from setuptools.command.build_ext import build_ext
 import pybind11
 import subprocess
 import sysconfig
+import os
 
 class get_pybind_include(object):
     """Helper class to determine the pybind11 include path"""
@@ -18,20 +19,33 @@ def brew_prefix(package_name):
 
 #libomp_prefix = brew_prefix("libomp")
 #python_include = sysconfig.get_paths()["include"]
-clang_path = "/opt/homebrew/opt/llvm/bin/clang++"
+sdk_path = os.popen('xcrun --show-sdk-path').read().strip()
+
+llvm_path = '/opt/homebrew/opt/llvm'
+
+extra_compile_args = [
+    '-fopenmp',
+    '-O2',
+    f'-I{llvm_path}/include',
+    '-arch', 'arm64',
+    f'-isysroot', os.popen('xcrun --show-sdk-path').read().strip(),
+]
+
+extra_link_args = [
+    '-fopenmp',
+    f'-L{llvm_path}/lib',
+    '-arch', 'arm64',
+    f'-isysroot', os.popen('xcrun --show-sdk-path').read().strip(),
+]
 
 ext_modules = [
     Extension(
-        'SamplerPy',                              # name of the module
-        ['src/MH.cpp', 'src/utils.cpp'],  # your source files
-        include_dirs=[
-            #python_include,
-            # add other include dirs, e.g. current directory, or where UF23Field.h lives
-            '.',
-        ],
+        'SamplerPy',
+        sources=['src/MH.cpp', 'src/utils.cpp'],
+        include_dirs=[sysconfig.get_paths()['include'], f'{llvm_path}/include'],
+        extra_compile_args=extra_compile_args,
+        extra_link_args=extra_link_args,
         language='c++',
-        extra_compile_args=["-fopenmp"],  # match your C++ standard,
-        extra_link_args=["-fopenmp"]
     ),
 ]
 

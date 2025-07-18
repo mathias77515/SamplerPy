@@ -49,14 +49,23 @@ MetropolisHastings::MetropolisHastings(std::function<double(std::vector<double>)
     {   
 
         int numThreads = get_num_threads();
-
+        omp_set_num_threads(numThreads);
         //omp_set_dynamic(0);     // Explicitly disable dynamic teams
         //omp_set_num_threads(numThreads); // Use 4 threads for all consecutive parallel regions
 
-        int max_threads = omp_get_max_threads();
+        //int max_threads = omp_get_max_threads();
         int num_procs = omp_get_num_procs();
-        std::cout << "Using " << numThreads << " threads for OpenMP." << std::endl;
+        std::cout << "Using " << numThreads << " threads for OpenMP" << std::endl;
         std::cout << "Available processors: " << num_procs << std::endl;
+
+        #pragma omp parallel
+        {
+            #pragma omp critical
+            {
+                std::cout << "Thread " << omp_get_thread_num() << " out of " 
+                        << omp_get_num_threads() << std::endl;
+            }
+        }
 
         stats.accepted = 0.0;
         stats.total = 0.0;
@@ -170,7 +179,9 @@ std::vector<std::vector<std::vector<double>>> MetropolisHastings::samples(int ns
                 next_percent += percent_step;
             }
 
-        #pragma omp parallel for
+        #pragma omp parallel
+        {
+        #pragma omp for schedule(static)
         for (int chain_i = 0; chain_i < nchain; chain_i++) {
 
             #pragma omp critical
@@ -194,7 +205,7 @@ std::vector<std::vector<std::vector<double>>> MetropolisHastings::samples(int ns
             for (int d = 0; d < dim; d++) {
                 chain[chain_i][steps][d] = x[chain_i][d];
             } 
-        }  
+        }} 
     }
 
     return chain;
