@@ -31,12 +31,9 @@ void printProgressBar(int current, int total, int barLength = 100) {
 MetropolisHastings::MetropolisHastings(std::function<double(std::vector<double>)> func)
     : func(func), engine(std::random_device{}()), normal(0.0, 1.0), uniform(0.0, 1.0) 
     {   
-        const char* env_omp = std::getenv("OMP_NUM_THREADS");
-        int val = std::stoi(std::string(env_omp));
-        std::cout << val << std::endl;
 
         omp_set_dynamic(0);     // Explicitly disable dynamic teams
-        omp_set_num_threads(val); // Use 4 threads for all consecutive parallel regions
+        omp_set_num_threads(omp_get_max_threads()); // Use 4 threads for all consecutive parallel regions
 
         int max_threads = omp_get_max_threads();
         int num_procs = omp_get_num_procs();
