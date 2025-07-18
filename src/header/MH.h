@@ -15,7 +15,7 @@ struct MHStats {
     double ratio = 0.0;
 
     // New members to store stddev values for each parameter across all samples
-    std::vector<double> stddevs; // vector of stddev values for each parameter
+    std::vector<std::vector<double>> stddevs; // vector of stddev values for each parameter
 
 };
 
@@ -26,7 +26,7 @@ public:
     MetropolisHastings(std::function<double(std::vector<double>)> func);
 
     // Runs the sampler for nsteps starting from x0 with proposal std deviations
-    std::vector<std::vector<std::vector<double>>> samples(int nsteps, std::vector<std::vector<double>> x0, std::vector<std::vector<double>> proposal_std, int nchain, const int percent_step, bool adaptative, bool progressbar);
+    std::vector<std::vector<std::vector<double>>> samples(int nsteps, std::vector<double> x0, std::vector<double> proposal_std, const int nchain, const int percent_step, bool adaptative, bool progressbar);
 
     // Performs a single Metropolis-Hastings step from current point
     std::vector<double> iteration(std::vector<double> point, std::vector<double>& sigma, int steps);
